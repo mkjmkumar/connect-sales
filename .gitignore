@@ -13,6 +13,8 @@ wget-log*
 .idea/
 .env-gdc
 .env-gdc-local
+.env.local
+.env
 # C extensions
 *.so
 

@@ -64,3 +64,26 @@ To learn more about the technologies used in this project, check out the followi
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out the [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+
+## Folder TreeStructure
+salesconnect/
+├── components/
+│   ├── AddLeadForm.tsx
+│   ├── LeadsList.tsx
+│   ├── SalesChart.tsx
+│   └── CustomChart.tsx
+├── lib/
+│   └── supabaseClient.ts
+├── pages/
+│   ├── api/
+│   │   └── leads.ts
+│   ├── _app.tsx
+│   └── index.tsx
+├── store/
+│   └── useStore.ts
+├── styles/
+│   └── globals.css
+├── next-seo.config.js
+├── package.json
+└── tsconfig.json
