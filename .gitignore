@@ -151,3 +151,18 @@ screenshots
 
 site
 package-lock.json
+
+# Next.js build output
+.next
+
+# Next.js cache
+.next/cache
+
+# Webpack cache
+.next/cache/webpack
+
+# Old pack files
+*.pack.gz.old
+
+# Next.js trace files
+.next/trace
