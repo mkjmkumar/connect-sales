@@ -1,21 +1,31 @@
 # Project overview
 
-SalesConnect is a Next.js application designed to streamline the management of sales leads and client information. It provides a comprehensive dashboard for users to view and interact with company and lead details, including licensing information, lead status, and contact details.
+SalesConnect is a Next.js application designed to streamline the management of sales leads, client and company information. It provides a dashboard for users to view and interact with company and lead details, including company information, lead status, and contact details.
 
 You will use the following technologies:
-- Next.js 14
-- Tailwind CSS
-- shadcn/ui
-- Lucide icon
-- TypeScript
-- Supabase
+Front End
+  Programing Language
+   Java Script 
+   Type Script  
+  Framework
+   React JS
+   Next JS
+  UI Components/Style Library
+   Shadcn/ui
+   Tailwindcss
+  Package Manager
+   NPM
+   NPX
+Database
+  Supabase
 
 Key features:
 - Create Company
 - Company List
 - View Company
-- Lead Management
-- Deal Management
+- Create Lead
+- Lead list
+- View Deal
 - Billing and Invoicing
 - Data Visualization
 - Search Functionality
@@ -97,8 +107,6 @@ Additional notes:
 - Allow viewing of all company information, including associated leads and deals
 - Remove the Board view filter from the Company list screen
 
-
-
 2. Lead Management:
    - Create new lead entries
    - View and manage a list of leads
@@ -149,11 +157,69 @@ Additional notes:
 # Project structure
 
 # Documentation
+### 1. **State Management**  
+Managing the application state is crucial when we will handling dynamic data such as leads and company information. 
+- **Zustand**: Simple, minimal state management without the boilerplate of Redux. It’s perfect for managing global state in a small to medium-sized app.
+  - **Install**: `npm install zustand`
+  - It integrates well with React hooks and has a lightweight API.
+https://github.com/pmndrs/zustand
+  
+### 2. **Data Fetching**  
+For interacting with APIs (fetching lead data, company information, etc.), We have opted below:
+- **SWR**: An extremely lightweight package from the Next.js team for data fetching with caching, revalidation, and error handling. It’s perfect for fetching sales lead data, and it integrates naturally with Next.js's SSR (server-side rendering) and ISR (incremental static regeneration).
+  - **Install**: `npm install swr`
+  - Supports automatic re-fetching when the user re-focuses the page, which is useful for up-to-date sales data.
+https://github.com/vercel/swr
+
+### 3. **UI Components & Styling**
+Creating an intuitive and attractive UI is essential for our app’s success:
+- **Chakra UI**: A modular and accessible component library that works great with React and Next.js. It allows you to build responsive UIs quickly.
+  - **Install**: `npm install @chakra-ui/react @emotion/react @emotion/styled framer-motion`
+
+https://github.com/chakra-ui/chakra-ui
+https://github.com/emotion-js/emotion/tree/main
+https://github.com/framer/motion
+
+### 4. **Form Handling**
+Since you’ll be managing lots of forms for adding and editing lead or company details:
+- **React Hook Form**: A library for building flexible forms that supports validation, submission handling, and form state management.
+  - **Install**: `npm install react-hook-form`
+https://github.com/react-hook-form/react-hook-form
+
+### 5. **Database Integration (Backend)**  
+For your app’s backend, connecting to databases such as PostgreSQL using Supabase client can be done through:
+- **Supabase**: A Supabase Client Library. it supports both CRUD operations and real-time subscriptions
+  - **Install**: `npm install @supabase/supabase-js`
+https://github.com/supabase/supabase-js
+  
+### 6. **Charts and Data Visualization**  
+To visualize sales metrics and lead progress:
+- **Recharts**: A simple charting library for React, perfect for visualizing sales performance, lead trends, etc.
+  - **Install**: `npm install recharts`
+https://github.com/recharts/recharts
+ 
+- **Chart.js**: For more customizable charts and graphs. It supports pie charts, bar graphs, line charts, etc.
+  - **Install**: `npm install chart.js react-chartjs-2`
+https://github.com/chartjs/Chart.js
+
+### 7. **SEO and Performance**
+Since we’re using **Next.js**, SEO optimization and performance are critical:
+- **next-seo**: Helps manage SEO metadata, including titles and descriptions.
+  - **Install**: `npm install next-seo`
+https://github.com/garmeeh/next-seo#readme
+
+### 8. **Error Tracking and Monitoring**  
+We want to ensure our app is running smoothly in production:
+- **Sentry**: Helps track errors, performance issues, and bugs in production environments.
+  - **Install**: `npm install @sentry/nextjs`
+https://github.com/getsentry/sentry-javascript
+
+These packages, along with Next.js’s built-in features like **API routes** and **server-side rendering**, will help us to build an efficient and scalable **SalesConnect** application. Let me know if you'd like more details on any of these!
 
 
 # Prompt
 
-  You are an expert in TypeScript, Node.js, Next.js App Router, React, Shadcn UI, Radix UI and Tailwind.
+  You are an expert in TypeScript, Node.js, Next.js App Router, React, Shadcn UI, Radix UI, Tailwind and Supabase.
   
   Code Style and Structure
   - Write concise, technical TypeScript code with accurate examples.
