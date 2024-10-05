@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import { useState } from 'react';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -7,64 +6,28 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function testConnection() {
-      const { data, error } = await supabase
-        .from('loginme')
-        .select('*');
-      console.log('Test query result:', { data, error });
-    }
-    testConnection();
-  }, []);
-
-  useEffect(() => {
-    async function testInsert() {
-      const { data, error } = await supabase
-        .from('loginme')
-        .insert({ username: 'test_user', usurped: 'test_password' })
-        .select();
-      console.log('Test insert result:', { data, error });
-    }
-    testInsert();
-  }, []);
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
 
-    console.log('Attempting login with username:', username);
-
     try {
-      // First, get all rows
-      const { data: allData, error: allError } = await supabase
-        .from('loginme')
-        .select('*');
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
 
-      console.log('All data in loginme table:', allData);
+      const data = await response.json();
 
-      if (allError) throw allError;
-
-      // Then, try to find the specific username
-      const { data, error } = await supabase
-        .from('loginme')
-        .select('*')
-        .eq('username', username.trim());
-
-      console.log('Supabase response for specific username:', { data, error });
-
-      if (error) throw error;
-
-      if (data && data.length > 0) {
-        console.log('Matching data found:', data);
-        setMessage('DB Connection working - Username found');
+      if (response.ok) {
+        setMessage('Login successful');
       } else {
-        console.log('No matching data found');
-        setMessage('Username not found');
+        setMessage(data.error || 'Login failed');
       }
     } catch (error) {
-      console.error('Full error object:', error);
-      setMessage(`Error: ${error.message || 'Unknown error occurred'}`);
+      console.error('Login error:', error);
+      setMessage('An error occurred during login');
     } finally {
       setLoading(false);
     }

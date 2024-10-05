@@ -520,6 +520,10 @@ We want to ensure our app is running smoothly in production:
   - **Install**: `npm install @sentry/nextjs`
 https://github.com/getsentry/sentry-javascript
 
+### 9. **Database management system**  
+  - **Install**: `npm install @supabase/supabase-js`
+https://github.com/supabase/supabase-js
+
 These packages, along with Next.js’s built-in features like **API routes** and **server-side rendering**, will help us to build an efficient and scalable **SalesConnect** application. Let me know if you'd like more details on any of these!
 
 
