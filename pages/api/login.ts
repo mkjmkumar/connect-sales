@@ -1,33 +1,36 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import { supabaseAdmin } from '../../lib/supabaseAdmin';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { username, password } = req.body;
-
   try {
-    const { data, error } = await supabaseAdmin
-      .from('loginme')
-      .select('uuid')
-    .eq('myusername', username.trim())
-    .eq('isactive', 1)
-    .eq('mypassword', password.trim())
+    const { email, password } = req.body;
+
+    // Fetch user from database
+    const { data: user, error } = await supabaseAdmin
+      .from('users')
+      .select('*')
+      .eq('email', email)
       .single();
 
-    if (error) throw error;
-
-    if (data) {
-      // Here you should implement proper password checking
-      // For demonstration, we're just checking if the user exists
-      res.status(200).json({ message: 'Login successful' });
-    } else {
-      res.status(401).json({ error: 'Invalid credentials' });
+    if (error || !user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
+
+    // Compare passwords (plain text comparison - NOT SECURE)
+    const passwordMatch = password === user.password;
+
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Login successful
+    return res.status(200).json({ message: 'Login successful', user });
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ error: 'An error occurred during login' });
+    return res.status(500).json({ error: 'Internal server error' });
   }
 }
