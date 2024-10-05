@@ -21,6 +21,7 @@ SalesConnect is a Next.js application for managing sales leads and client inform
    # or
    yarn install
    ```
+   apt-get install tree
 
 3. Run the development server:
    ```
@@ -67,23 +68,35 @@ Check out the [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 
 ## Folder TreeStructure
-salesconnect/
-├── components/
-│   ├── AddLeadForm.tsx
-│   ├── LeadsList.tsx
-│   ├── SalesChart.tsx
-│   └── CustomChart.tsx
-├── lib/
-│   └── supabaseClient.ts
-├── pages/
-│   ├── api/
-│   │   └── leads.ts
-│   ├── _app.tsx
-│   └── index.tsx
-├── store/
-│   └── useStore.ts
-├── styles/
-│   └── globals.css
+$ tree -L 2 -I 'node_modules|git|ls_volume'
+.
+├── components
+│   ├── Login.tsx
+│   └── ui
+├── components.json
+├── dbObjects.sql
+├── instructions
+│   └── instructions.md
+├── lib
+│   ├── supabaseAdmin.ts
+│   ├── supabaseClient.ts
+│   └── utils.ts
+├── next.config.js
+├── next-env.d.ts
 ├── next-seo.config.js
 ├── package.json
+├── package-lock.json
+├── pages
+│   ├── api
+│   ├── _app.tsx
+│   ├── index.tsx
+│   └── login.tsx
+├── README.md
+├── store
+│   └── useStore.ts
+├── styles
+│   └── globals.css
+├── tailwind.config.js
+├── __tests__
+│   └── LeadsList.test.tsx
 └── tsconfig.json

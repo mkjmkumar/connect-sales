@@ -166,3 +166,10 @@ package-lock.json
 
 # Next.js trace files
 .next/trace
+
+# UI components
+components/ui
+
+# My Prompts and instructions
+prompts/
+instructions.md
