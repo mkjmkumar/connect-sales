@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { supabase } from '../../lib/supabaseClient';
+import { supabaseAdmin } from '../../lib/supabaseAdmin';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { username, password } = req.body;
 
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('loginme')
       .select('uuid')
     .eq('myusername', username.trim())
