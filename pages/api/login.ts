@@ -21,7 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Compare passwords (plain text comparison - NOT SECURE)
-    const passwordMatch = password === user.password;
+    const passwordMatch = password === user.password_hash;
 
     if (!passwordMatch) {
       return res.status(401).json({ error: 'Invalid credentials' });
