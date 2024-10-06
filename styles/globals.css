@@ -74,25 +74,3 @@
     @apply bg-background text-foreground;
   }
 }
- 
-@layer components {
-  .container-centered {
-    @apply flex items-center justify-center min-h-screen bg-gray-100;
-  }
-
-  .card-base {
-    @apply bg-white p-8 rounded-lg shadow-md;
-  }
-
-  .heading-primary {
-    @apply text-4xl font-bold text-center mb-4;
-  }
-
-  .text-body {
-    @apply text-center text-lg mb-4;
-  }
-
-  .btn-primary {
-    @apply bg-blue-500 text-white px-8 py-2 rounded-md text-lg hover:bg-blue-600;
-  }
-}
