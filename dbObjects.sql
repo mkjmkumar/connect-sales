@@ -364,6 +364,7 @@ CREATE TABLE IF NOT EXISTS targets (
 --Dashboard Queries
 
 -- 1. Top Summary Statistics
+-- View name top_summary_statistics_1
 SELECT 
     (SELECT COUNT(*) FROM companies) AS total_companies,
     (SELECT COUNT(*) FROM leads) AS total_leads,
@@ -372,6 +373,7 @@ SELECT
 
 
 -- 2. Query to get target vs achievement
+-- View name target_vs_achievement_2
 SELECT
     t.target_value AS target,
     COUNT(d.deal_id) AS achievement,
@@ -393,6 +395,7 @@ GROUP BY
     t.target_value;
 
 -- 3. Progress by Quarter
+-- View name progress_by_quarter_3
 WITH quarters AS (
     SELECT generate_series(1, 4) AS quarter
 )
@@ -418,6 +421,7 @@ ORDER BY
     q.quarter;
 
 -- 4. Lead Generation (Monthly Sales)
+-- View name lead_generation_monthly_sales_4
 SELECT 
     TO_CHAR(created_at, 'Month') AS month,
     COUNT(*) AS monthly_sales
@@ -431,6 +435,7 @@ ORDER BY
     DATE_TRUNC('month', created_at);
 
 -- 5. Deal Conversation (Weekly)
+-- View name deal_conversation_weekly_5
 WITH weeks AS (
     SELECT generate_series(
         DATE_TRUNC('week', CURRENT_DATE - INTERVAL '3 weeks'),
@@ -462,6 +467,7 @@ ORDER BY
     w.week_start DESC;
 
 -- 6. Deal Conversation (Activities)
+-- View name deal_conversation_activities_6
 SELECT 
     'TEL for HOT activities' AS activity_type,
     COUNT(*) AS count
@@ -541,6 +547,7 @@ WHERE
 
 -- 7. Top Client
 -- Top Client Query
+-- View name top_client_7
 SELECT
     c.name_en AS company,
     COALESCE(SUM(d.deal_value), 0) AS revenue,
