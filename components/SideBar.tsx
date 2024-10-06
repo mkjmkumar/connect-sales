@@ -1,15 +1,15 @@
 import Link from 'next/link'
 import { useState } from 'react'
-import { ChevronDown, ChevronRight, LayoutDashboard, DollarSign, FileText, HelpCircle, LogOut } from 'lucide-react'
+import { ChevronDown, LayoutDashboard, BarChart2, FileText, HelpCircle, LogOut, Building, Users, DollarSign } from 'lucide-react'
 
 const MenuItem = ({ icon: Icon, label, href, subItems }) => {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <div>
+    <div className="relative">
       <Link 
         href={href} 
-        className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 transition-colors"
+        className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 transition-all duration-200 ease-in-out"
         onClick={(e) => {
           if (subItems) {
             e.preventDefault()
@@ -17,25 +17,32 @@ const MenuItem = ({ icon: Icon, label, href, subItems }) => {
           }
         }}
       >
-        <Icon className="mr-3 h-5 w-5" />
+        <Icon className="mr-3 h-5 w-5 text-gray-500" />
         <span className="text-base font-medium">{label}</span>
         {subItems && (
-          <span className="ml-auto">
-            {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+          <span className={`ml-auto transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
+            <ChevronDown className="h-4 w-4" />
           </span>
         )}
       </Link>
-      {isOpen && subItems && (
-        <div className="ml-12 mt-1">
-          {subItems.map((item, index) => (
-            <Link 
-              key={index} 
-              href={item.href} 
-              className="block py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              {item.label}
-            </Link>
-          ))}
+      {subItems && (
+        <div 
+          className={`overflow-hidden transition-all duration-200 ease-in-out ${
+            isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+          }`}
+        >
+          <div className="pl-10 py-2 space-y-1">
+            {subItems.map((item, index) => (
+              <Link 
+                key={index} 
+                href={item.href} 
+                className="flex items-center py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors duration-150 ease-in-out"
+              >
+                {item.icon && <item.icon className="mr-2 h-4 w-4" />}
+                {item.label}
+              </Link>
+            ))}
+          </div>
         </div>
       )}
     </div>
@@ -51,14 +58,14 @@ export default function Sidebar() {
       <nav className="mt-6 flex-grow space-y-1">
         <MenuItem icon={LayoutDashboard} label="Dashboard" href="/dashboard" />
         <MenuItem 
-          icon={DollarSign} 
+          icon={BarChart2} 
           label="Sales" 
           href="/sales" 
           subItems={[
-            { label: 'Sales Dashboard', href: '/sales/dashboard' },
-            { label: 'Company', href: '/sales/company' },
-            { label: 'Lead', href: '/sales/lead' },
-            { label: 'Deal', href: '/sales/deal' },
+            { icon: LayoutDashboard, label: 'Sales Dashboard', href: '/sales/dashboard' },
+            { icon: Building, label: 'Company', href: '/sales/company' },
+            { icon: Users, label: 'Lead', href: '/sales/lead' },
+            { icon: DollarSign, label: 'Deal', href: '/sales/deal' },
           ]} 
         />
         <MenuItem 
@@ -66,9 +73,9 @@ export default function Sidebar() {
           label="Billing" 
           href="/billing" 
           subItems={[
-            { label: 'Billing Dashboard', href: '/billing/dashboard' },
-            { label: 'Estimate', href: '/billing/estimate' },
-            { label: 'Invoice', href: '/billing/invoice' },
+            { icon: LayoutDashboard, label: 'Billing Dashboard', href: '/billing/dashboard' },
+            { icon: FileText, label: 'Estimate', href: '/billing/estimate' },
+            { icon: FileText, label: 'Invoice', href: '/billing/invoice' },
           ]} 
         />
         <MenuItem icon={HelpCircle} label="FAQ" href="/faq" />

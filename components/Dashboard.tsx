@@ -29,25 +29,40 @@ import {
 import { Bell, ChevronDown, Menu } from 'lucide-react' 
 import { Button } from "@/components/ui/button"
 import Sidebar from './SideBar'
+import { Building, DollarSign, Diamond, CheckCircle } from 'lucide-react'
 
 
 // Summary Statistics Component
-const SummaryStats = ({ stats }) => (
-  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-    {Object.entries(stats).map(([key, value]) => (
-      <Card key={key}>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
-            {key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{value}</div>
-        </CardContent>
-      </Card>
-    ))}
-  </div>
-)
+const SummaryStats = ({ stats }) => {
+  const iconMap = {
+    total_companies: Building,
+    total_leads: DollarSign,
+    total_deals: Diamond,
+    closed_deals: CheckCircle,
+  }
+
+  return (
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      {Object.entries(stats).map(([key, value]) => {
+        const Icon = iconMap[key] || Building
+        return (
+          <Card key={key} className="relative overflow-hidden">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                {key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+              </CardTitle>
+              <Icon className="h-8 w-8 text-primary" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold">{value}</div>
+            </CardContent>
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary/10" />
+          </Card>
+        )
+      })}
+    </div>
+  )
+}
 
 // Target vs Achievement Component
 const TargetAchievement = ({ data }) => (
@@ -186,7 +201,12 @@ const TopClients = ({ data }) => (
 // Main Dashboard Component
 export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
-  const [summaryStats, setSummaryStats] = useState({})
+  const [summaryStats, setSummaryStats] = useState({
+    total_companies: 0,
+    total_leads: 0,
+    total_deals: 0,
+    closed_deals: 0,
+  })
   const [targetAchievement, setTargetAchievement] = useState({})
   const [progressByQuarter, setProgressByQuarter] = useState([])
   const [leadGeneration, setLeadGeneration] = useState([])
