@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { useState } from 'react'
-import { ChevronDown, LayoutDashboard, BarChart2, FileText, HelpCircle, LogOut, Building, Users, DollarSign } from 'lucide-react'
+import { 
+  ChevronDown, LayoutDashboard, BarChart2, FileText, HelpCircle, LogOut, Building, Users, Briefcase, Calculator, Receipt
+} from 'lucide-react'
 
 const MenuItem = ({ icon: Icon, label, href, subItems }) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -65,7 +67,7 @@ export default function Sidebar() {
             { icon: LayoutDashboard, label: 'Sales Dashboard', href: '/sales/dashboard' },
             { icon: Building, label: 'Company', href: '/sales/company' },
             { icon: Users, label: 'Lead', href: '/sales/lead' },
-            { icon: DollarSign, label: 'Deal', href: '/sales/deal' },
+            { icon: Briefcase, label: 'Deal', href: '/sales/deal' },
           ]} 
         />
         <MenuItem 
@@ -74,8 +76,8 @@ export default function Sidebar() {
           href="/billing" 
           subItems={[
             { icon: LayoutDashboard, label: 'Billing Dashboard', href: '/billing/dashboard' },
-            { icon: FileText, label: 'Estimate', href: '/billing/estimate' },
-            { icon: FileText, label: 'Invoice', href: '/billing/invoice' },
+            { icon: Calculator, label: 'Estimate', href: '/billing/estimate' },
+            { icon: Receipt, label: 'Invoice', href: '/billing/invoice' },
           ]} 
         />
         <MenuItem icon={HelpCircle} label="FAQ" href="/faq" />

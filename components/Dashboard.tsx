@@ -29,15 +29,15 @@ import {
 import { Bell, ChevronDown, Menu } from 'lucide-react' 
 import { Button } from "@/components/ui/button"
 import Sidebar from './SideBar'
-import { Building, DollarSign, Diamond, CheckCircle } from 'lucide-react'
+import { Building, Users, Briefcase, CheckCircle } from 'lucide-react'
 
 
 // Summary Statistics Component
 const SummaryStats = ({ stats }) => {
   const iconMap = {
     total_companies: Building,
-    total_leads: DollarSign,
-    total_deals: Diamond,
+    total_leads: Users,
+    total_deals: Briefcase,
     closed_deals: CheckCircle,
   }
 
