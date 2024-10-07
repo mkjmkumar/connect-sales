@@ -1,10 +1,27 @@
-import Link from 'next/link'
 import { useState } from 'react'
+import Link from 'next/link'
 import { 
   ChevronDown, LayoutDashboard, BarChart2, FileText, HelpCircle, LogOut, Building, Users, Briefcase, Calculator, Receipt
 } from 'lucide-react'
+import { LucideProps } from 'lucide-react'
 
-const MenuItem = ({ icon: Icon, label, href, subItems }) => {
+// Define LucideIcon type
+type LucideIcon = React.ComponentType<LucideProps>
+
+interface SubItem {
+  label: string;
+  href: string;
+  icon?: LucideIcon;
+}
+
+interface MenuItemProps {
+  icon: LucideIcon;
+  label: string;
+  href: string;
+  subItems?: SubItem[];
+}
+
+const MenuItem = ({ icon: Icon, label, href, subItems }: MenuItemProps) => {
   const [isOpen, setIsOpen] = useState(false)
 
   return (

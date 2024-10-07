@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from 'next'
 import { supabaseAdmin } from '../../lib/supabaseAdmin'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -14,15 +14,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         supabaseAdmin.from('top_client_7').select('*')
       ])
       res.status(200).json({
-        summaryStats: summaryData.data[0],
-        targetAchievement: targetData.data[0],
-        progressByQuarter: progressData.data,
-        leadGeneration: leadData.data,
-        dealConversation: dealData.data,
-        dealConversationActivities: activityData.data,
-        topClients: clientData.data
+        summaryStats: summaryData.data?.[0] ?? {},
+        targetAchievement: targetData.data?.[0] ?? {},
+        progressByQuarter: progressData.data ?? [],
+        leadGeneration: leadData.data ?? [],
+        dealConversation: dealData.data ?? [],
+        topClients: clientData.data ?? [],
+        dealConversationActivities: activityData.data ?? [],
       })
     } catch (error) {
+      console.error('Error fetching dashboard data:', error)
       res.status(500).json({ error: 'Failed to fetch dashboard data' })
     }
   } else {

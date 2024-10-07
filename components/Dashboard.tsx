@@ -167,8 +167,15 @@ const ProgressByQuarter = ({ data }: { data: ProgressByQuarterData[] }) => (
   </Card>
 )
 
+// Define an interface for the LeadGeneration data
+interface LeadGenerationData {
+  month: string;
+  monthly_sales: number;
+  // Add any other properties that might be present in your data
+}
+
 // Lead Generation Chart Component
-const LeadGenerationChart = ({ data }) => (
+const LeadGenerationChart = ({ data }: { data: LeadGenerationData[] }) => (
   <ResponsiveContainer width="100%" height={300}>
     <BarChart data={data}>
       <CartesianGrid strokeDasharray="3 3" />
@@ -181,7 +188,18 @@ const LeadGenerationChart = ({ data }) => (
 )
 
 // Deal Conversation Component
-const DealConversation = ({ data }) => {
+interface DealConversationData {
+  week: string;
+  client: number;
+  hot: number;
+  warm: number;
+  cold: number;
+  contact: number;
+  dead: number;
+  other: number;
+}
+
+const DealConversation = ({ data }: { data: DealConversationData[] }) => {
   const [timeframe, setTimeframe] = useState('Weekly')
 
   return (
@@ -235,8 +253,15 @@ const DealConversation = ({ data }) => {
   )
 }
 
+// Define an interface for the TopClients data
+interface TopClientData {
+  company: string;
+  revenue: number;
+  percentage: number;
+}
+
 // Top Clients Component
-const TopClients = ({ data }) => (
+const TopClients = ({ data }: { data: TopClientData[] }) => (
   <Card>
     <CardHeader>
       <CardTitle>Top Clients</CardTitle>
@@ -264,7 +289,12 @@ const TopClients = ({ data }) => (
   </Card>
 )
 
-const DealConversationActivities = ({ data }) => {
+interface DealConversationActivityData {
+  activity_type: string;
+  count: number;
+}
+
+const DealConversationActivities = ({ data }: { data: DealConversationActivityData[] }) => {
   const [timeframe, setTimeframe] = useState('Today')
 
   console.log('DealConversationActivities data:', data)
@@ -314,7 +344,7 @@ const DealConversationActivities = ({ data }) => {
   )
 }
 
-const TopClientsTable = ({ data }) => (
+const TopClientsTable = ({ data }: { data: TopClientData[] }) => (
   <Card>
     <CardHeader>
       <CardTitle>Top Client</CardTitle>
@@ -351,7 +381,11 @@ export default function Dashboard() {
     total_deals: 0,
     closed_deals: 0,
   })
-  const [targetAchievement, setTargetAchievement] = useState({})
+  const [targetAchievement, setTargetAchievement] = useState<TargetAchievementData>({
+    percentage: 0,
+    target: 0,
+    achievement: 0
+  });
   const [progressByQuarter, setProgressByQuarter] = useState([])
   const [leadGeneration, setLeadGeneration] = useState([])
   const [dealConversation, setDealConversation] = useState([])
@@ -371,9 +405,9 @@ export default function Dashboard() {
         const data = await response.json()
         setSummaryStats(data.summaryStats)
         setTargetAchievement({
+          percentage: data.targetAchievement.percentage,
           target: data.targetAchievement.target,
-          achievement: data.targetAchievement.achievement,
-          percentage: data.targetAchievement.percentage
+          achievement: data.targetAchievement.achievement
         })
         setProgressByQuarter(data.progressByQuarter)
         setLeadGeneration(data.leadGeneration)
