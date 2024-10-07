@@ -10,7 +10,10 @@ import {
   YAxis, 
   CartesianGrid, 
   Tooltip, 
-  ResponsiveContainer 
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell
 } from 'recharts'
 import { 
   Table, 
@@ -30,21 +33,33 @@ import { Bell, ChevronDown, Menu } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import Sidebar from './SideBar'
 import { Building, Users, Briefcase, CheckCircle } from 'lucide-react'
+import { LucideIcon } from 'lucide-react'
 
+// Define an interface for the stats object
+interface Stats {
+  total_companies: number;
+  total_leads: number;
+  total_deals: number;
+  closed_deals: number;
+  // Add other stat properties as needed
+}
 
 // Summary Statistics Component
-const SummaryStats = ({ stats }) => {
+const SummaryStats = ({ stats }: { stats: Stats }) => {
   const iconMap = {
     total_companies: Building,
     total_leads: Users,
     total_deals: Briefcase,
     closed_deals: CheckCircle,
-  }
+  } as const;
+
+  // Define a type for the icon map keys
+  type IconMapKey = keyof typeof iconMap;
 
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-      {Object.entries(stats).map(([key, value]) => {
-        const Icon = iconMap[key] || Building
+      {(Object.entries(stats) as [IconMapKey, number][]).map(([key, value]) => {
+        const Icon: LucideIcon = iconMap[key as IconMapKey] || Building;
         return (
           <Card key={key} className="relative overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -64,23 +79,65 @@ const SummaryStats = ({ stats }) => {
   )
 }
 
+// Define an interface for the TargetAchievement data
+interface TargetAchievementData {
+  percentage: number;
+  target: number;
+  achievement: number;
+}
+
 // Target vs Achievement Component
-const TargetAchievement = ({ data }) => (
-  <Card>
-    <CardHeader>
-      <CardTitle>Target vs Achievement</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <div className="h-[200px]">
-        {/* Implement semi-circular gauge chart here */}
-        {/* You may need to use a library like react-gauge-chart for this */}
+const TargetAchievement = ({ data }: { data: TargetAchievementData }) => {
+  const percentage = data.percentage || 0;
+  const target = data.target || 0;
+  const achievement = data.achievement || 0;
+
+  return (
+    <div className="flex flex-col items-center">
+      <ResponsiveContainer width="100%" height={200}>
+        <PieChart>
+          <Pie
+            data={[{ value: percentage }, { value: 100 - percentage }]}
+            cx="50%"
+            cy="100%"
+            startAngle={180}
+            endAngle={0}
+            innerRadius={60}
+            outerRadius={80}
+            paddingAngle={0}
+            dataKey="value"
+          >
+            <Cell fill="#3182CE" />
+            <Cell fill="#EDF2F7" />
+          </Pie>
+        </PieChart>
+      </ResponsiveContainer>
+      <div className="text-3xl font-bold mt-4">{percentage}%</div>
+      <div className="text-sm text-gray-500">Achievement</div>
+      <div className="flex justify-between w-full mt-4">
+        <div className="text-center">
+          <div className="text-2xl font-bold">{achievement}</div>
+          <div className="text-sm text-gray-500">Achieved</div>
+        </div>
+        <div className="text-center">
+          <div className="text-2xl font-bold">{target}</div>
+          <div className="text-sm text-gray-500">Target</div>
+        </div>
       </div>
-    </CardContent>
-  </Card>
-)
+    </div>
+  );
+};
+
+// Define an interface for the ProgressByQuarter data
+interface ProgressByQuarterData {
+  quarter: string;
+  target: number;
+  achievement: number;
+  percentage: number;
+}
 
 // Progress by Quarter Component
-const ProgressByQuarter = ({ data }) => (
+const ProgressByQuarter = ({ data }: { data: ProgressByQuarterData[] }) => (
   <Card>
     <CardHeader>
       <CardTitle>Progress by Quarter</CardTitle>
@@ -112,35 +169,44 @@ const ProgressByQuarter = ({ data }) => (
 
 // Lead Generation Chart Component
 const LeadGenerationChart = ({ data }) => (
-  <Card>
-    <CardHeader>
-      <CardTitle>Lead Generation</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" />
-          <YAxis />
-          <Tooltip />
-          <Bar dataKey="monthly_sales" fill="#8884d8" />
-        </BarChart>
-      </ResponsiveContainer>
-    </CardContent>
-  </Card>
+  <ResponsiveContainer width="100%" height={300}>
+    <BarChart data={data}>
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="month" />
+      <YAxis />
+      <Tooltip />
+      <Bar dataKey="monthly_sales" fill="#8884d8" />
+    </BarChart>
+  </ResponsiveContainer>
 )
 
 // Deal Conversation Component
-const DealConversation = ({ data }) => (
-  <Card>
-    <CardHeader>
-      <CardTitle>Deal Conversation</CardTitle>
-    </CardHeader>
-    <CardContent>
+const DealConversation = ({ data }) => {
+  const [timeframe, setTimeframe] = useState('Weekly')
+
+  return (
+    <>
+      <div className="flex justify-end mb-4">
+        <Button
+          variant={timeframe === 'Weekly' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setTimeframe('Weekly')}
+          className="mr-2"
+        >
+          Weekly
+        </Button>
+        <Button
+          variant={timeframe === 'Quarterly' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setTimeframe('Quarterly')}
+        >
+          Quarterly
+        </Button>
+      </div>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Week</TableHead>
+            <TableHead>{timeframe}</TableHead>
             <TableHead>Client</TableHead>
             <TableHead>Hot</TableHead>
             <TableHead>Warm</TableHead>
@@ -165,9 +231,9 @@ const DealConversation = ({ data }) => (
           ))}
         </TableBody>
       </Table>
-    </CardContent>
-  </Card>
-)
+    </>
+  )
+}
 
 // Top Clients Component
 const TopClients = ({ data }) => (
@@ -198,6 +264,84 @@ const TopClients = ({ data }) => (
   </Card>
 )
 
+const DealConversationActivities = ({ data }) => {
+  const [timeframe, setTimeframe] = useState('Today')
+
+  console.log('DealConversationActivities data:', data)
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Deal Conversation Activities</CardTitle>
+        <div className="flex space-x-2">
+          {['Today', 'Week', 'Month'].map((period) => (
+            <Button
+              key={period}
+              variant={timeframe === period ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setTimeframe(period)}
+            >
+              {period}
+            </Button>
+          ))}
+        </div>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Activity Type</TableHead>
+              <TableHead>Count</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data && data.length > 0 ? (
+              data.map((activity) => (
+                <TableRow key={activity.activity_type}>
+                  <TableCell>{activity.activity_type}</TableCell>
+                  <TableCell>{activity.count}</TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={2} className="text-center">No data available</TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  )
+}
+
+const TopClientsTable = ({ data }) => (
+  <Card>
+    <CardHeader>
+      <CardTitle>Top Client</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Company</TableHead>
+            <TableHead>Revenue</TableHead>
+            <TableHead>%</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {data.map((client) => (
+            <TableRow key={client.company}>
+              <TableCell>{client.company}</TableCell>
+              <TableCell>{client.revenue}</TableCell>
+              <TableCell>{client.percentage}%</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </CardContent>
+  </Card>
+)
+
 // Main Dashboard Component
 export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
@@ -212,6 +356,7 @@ export default function Dashboard() {
   const [leadGeneration, setLeadGeneration] = useState([])
   const [dealConversation, setDealConversation] = useState([])
   const [topClients, setTopClients] = useState([])
+  const [dealConversationActivities, setDealConversationActivities] = useState([])
 
 
 
@@ -225,11 +370,16 @@ export default function Dashboard() {
       if (response.ok) {
         const data = await response.json()
         setSummaryStats(data.summaryStats)
-        setTargetAchievement(data.targetAchievement)
+        setTargetAchievement({
+          target: data.targetAchievement.target,
+          achievement: data.targetAchievement.achievement,
+          percentage: data.targetAchievement.percentage
+        })
         setProgressByQuarter(data.progressByQuarter)
         setLeadGeneration(data.leadGeneration)
         setDealConversation(data.dealConversation)
         setTopClients(data.topClients)
+        setDealConversationActivities(data.dealConversationActivities)
       } else {
         console.error('Failed to fetch dashboard data')
       }
@@ -301,20 +451,40 @@ export default function Dashboard() {
                 </TabsList>
                 <TabsContent value="overview" className="space-y-4">
                   <SummaryStats stats={summaryStats} />
-                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                    <TargetAchievement data={targetAchievement} />
-                    <Card className="col-span-4">
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    <Card className="col-span-1">
                       <CardHeader>
-                        <CardTitle>Overview</CardTitle>
+                        <CardTitle>Target vs Achievement</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <TargetAchievement data={targetAchievement} />
+                      </CardContent>
+                    </Card>
+                    <Card className="col-span-1 lg:col-span-2">
+                      <CardHeader>
+                        <CardTitle>Progress by Quarter</CardTitle>
                       </CardHeader>
                       <CardContent>
                         <ProgressByQuarter data={progressByQuarter} />
                       </CardContent>
                     </Card>
-                  </div>
-                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                    <LeadGenerationChart data={leadGeneration} />
-                    <Card className="col-span-4">
+                    <Card className="col-span-1">
+                      <CardHeader>
+                        <CardTitle>Lead Generation</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <LeadGenerationChart data={leadGeneration} />
+                      </CardContent>
+                    </Card>
+                    <Card className="col-span-1 lg:col-span-2">
+                      <CardHeader>
+                        <CardTitle>Deal Conversation Activities</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <DealConversationActivities data={dealConversationActivities} />
+                      </CardContent>
+                    </Card>
+                    <Card className="col-span-1 lg:col-span-2">
                       <CardHeader>
                         <CardTitle>Deal Conversation</CardTitle>
                       </CardHeader>
@@ -322,8 +492,15 @@ export default function Dashboard() {
                         <DealConversation data={dealConversation} />
                       </CardContent>
                     </Card>
+                    <Card className="col-span-1">
+                      <CardHeader>
+                        <CardTitle>Top Client</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <TopClientsTable data={topClients} />
+                      </CardContent>
+                    </Card>
                   </div>
-                  <TopClients data={topClients} />
                 </TabsContent>
               </Tabs>
             </div>
