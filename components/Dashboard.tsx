@@ -13,7 +13,8 @@ import {
   ResponsiveContainer,
   PieChart,
   Pie,
-  Cell
+  Cell,
+  Legend
 } from 'recharts'
 import { 
   Table, 
@@ -139,9 +140,6 @@ interface ProgressByQuarterData {
 // Progress by Quarter Component
 const ProgressByQuarter = ({ data }: { data: ProgressByQuarterData[] }) => (
   <Card>
-    <CardHeader>
-      <CardTitle>Progress by Quarter</CardTitle>
-    </CardHeader>
     <CardContent>
       <Table>
         <TableHeader>
@@ -261,33 +259,39 @@ interface TopClientData {
 }
 
 // Top Clients Component
-const TopClients = ({ data }: { data: TopClientData[] }) => (
-  <Card>
-    <CardHeader>
-      <CardTitle>Top Clients</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Company</TableHead>
-            <TableHead>Revenue</TableHead>
-            <TableHead>Percentage</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.map((client) => (
-            <TableRow key={client.company}>
-              <TableCell>{client.company}</TableCell>
-              <TableCell>{client.revenue}</TableCell>
-              <TableCell>{client.percentage}%</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </CardContent>
-  </Card>
-)
+const TopClientsPieChart = ({ data }: { data: TopClientData[] }) => {
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
+
+  return (
+    <Card>
+      <CardContent>
+        <ResponsiveContainer width="100%" height={300}>
+          <PieChart>
+            <Pie
+              data={data}
+              cx="50%"
+              cy="50%"
+              labelLine={false}
+              outerRadius={80}
+              fill="#8884d8"
+              dataKey="revenue"
+              nameKey="company"
+              label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+            >
+              {data.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip 
+              formatter={(value, name) => [`$${value}`, name]}
+            />
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
+      </CardContent>
+    </Card>
+  )
+}
 
 interface DealConversationActivityData {
   activity_type: string;
@@ -297,13 +301,10 @@ interface DealConversationActivityData {
 const DealConversationActivities = ({ data }: { data: DealConversationActivityData[] }) => {
   const [timeframe, setTimeframe] = useState('Today')
 
-  console.log('DealConversationActivities data:', data)
-
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Deal Conversation Activities</CardTitle>
-        <div className="flex space-x-2">
+      <CardContent>
+        <div className="flex space-x-2 mb-4">
           {['Today', 'Week', 'Month'].map((period) => (
             <Button
               key={period}
@@ -315,8 +316,6 @@ const DealConversationActivities = ({ data }: { data: DealConversationActivityDa
             </Button>
           ))}
         </div>
-      </CardHeader>
-      <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
@@ -343,34 +342,6 @@ const DealConversationActivities = ({ data }: { data: DealConversationActivityDa
     </Card>
   )
 }
-
-const TopClientsTable = ({ data }: { data: TopClientData[] }) => (
-  <Card>
-    <CardHeader>
-      <CardTitle>Top Client</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Company</TableHead>
-            <TableHead>Revenue</TableHead>
-            <TableHead>%</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.map((client) => (
-            <TableRow key={client.company}>
-              <TableCell>{client.company}</TableCell>
-              <TableCell>{client.revenue}</TableCell>
-              <TableCell>{client.percentage}%</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </CardContent>
-  </Card>
-)
 
 // Main Dashboard Component
 export default function Dashboard() {
@@ -518,20 +489,20 @@ export default function Dashboard() {
                         <DealConversationActivities data={dealConversationActivities} />
                       </CardContent>
                     </Card>
+                    <Card className="col-span-1">
+                      <CardHeader>
+                        <CardTitle>Top Clients</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <TopClientsPieChart data={topClients} />
+                      </CardContent>
+                    </Card>
                     <Card className="col-span-1 lg:col-span-2">
                       <CardHeader>
                         <CardTitle>Deal Conversation</CardTitle>
                       </CardHeader>
                       <CardContent>
                         <DealConversation data={dealConversation} />
-                      </CardContent>
-                    </Card>
-                    <Card className="col-span-1">
-                      <CardHeader>
-                        <CardTitle>Top Client</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <TopClientsTable data={topClients} />
                       </CardContent>
                     </Card>
                   </div>
