@@ -104,7 +104,7 @@ export default function Sidebar() {
           isCollapsed={isCollapsed}
           subItems={[
             { icon: LayoutDashboard, label: 'Sales Dashboard', href: '/sales/dashboard' },
-            { icon: Building, label: 'Company', href: '/sales/company' },
+            { icon: Building, label: 'Company', href: '/companies' },
             { icon: Users, label: 'Lead', href: '/sales/lead' },
             { icon: Briefcase, label: 'Deal', href: '/sales/deal' },
           ]} 
