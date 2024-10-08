@@ -7,14 +7,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const { page, pageSize, filters, sortBy, search } = req.query
 
       let query = supabaseAdmin
-        .from('companies')
+        .from('companies_list')
         .select('*', { count: 'exact' })
 
       // Apply filters
       if (filters) {
         const parsedFilters = JSON.parse(filters as string)
         Object.entries(parsedFilters).forEach(([key, value]) => {
-          query = query.eq(key, value)
+          if (value) {
+            query = query.eq(key, value)
+          }
         })
       }
 

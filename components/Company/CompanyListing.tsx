@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import useSWR from 'swr'
+import useSWR, { mutate } from 'swr'
 import { useForm } from 'react-hook-form'
 import {
   Table,
@@ -48,7 +48,23 @@ export default function CompanyListing() {
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen)
 
-  const { data, error } = useSWR(`/api/companies?page=${page}&pageSize=${pageSize}&filters=${JSON.stringify(filters)}&sortBy=${JSON.stringify(sortBy)}&search=${searchTerm}`, fetcher)
+  const { data, error } = useSWR(
+    `/api/companies-list?${new URLSearchParams({
+      search: searchTerm,
+      filters: JSON.stringify(filters),
+      sortBy: JSON.stringify(sortBy),
+      page: page.toString(),
+      pageSize: pageSize.toString()
+    })}`,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      onError: (err) => {
+        console.error('Error fetching companies data:', err)
+      }
+    }
+  )
 
   const { register, handleSubmit } = useForm()
 
@@ -154,14 +170,36 @@ export default function CompanyListing() {
                     <SelectValue placeholder="Stage" />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="client">Client</SelectItem>
                     <SelectItem value="potential">Potential</SelectItem>
-                    <SelectItem value="qualified">Qualified</SelectItem>
+                    <SelectItem value="target">Target</SelectItem>
                     <SelectItem value="proposition">Proposition</SelectItem>
-                    <SelectItem value="won">Won</SelectItem>
                   </SelectContent>
                 </Select>
 
-                {/* Add more filters for Employee Size, Industry, Country, and State */}
+                <Select onValueChange={(value) => handleFilterChange('country', value)}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Country" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Japan">Japan</SelectItem>
+                    <SelectItem value="USA">USA</SelectItem>
+                    <SelectItem value="UK">UK</SelectItem>
+                    {/* Add more countries as needed */}
+                  </SelectContent>
+                </Select>
+
+                <Select onValueChange={(value) => handleFilterChange('industry', value)}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Industry" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Technology">Technology</SelectItem>
+                    <SelectItem value="Software">Software</SelectItem>
+                    <SelectItem value="Finance">Finance</SelectItem>
+                    {/* Add more industries as needed */}
+                  </SelectContent>
+                </Select>
 
                 <Button variant="outline" onClick={() => setFilters({})}>Reset Filters</Button>
               </div>
@@ -307,12 +345,12 @@ function formatCurrency(amount: number, country: string) {
 }
 
 async function handleDelete(companyId: number) {
-  if (window.confirm('Are you sure you want to delete this company?')) {
+  if (confirm('Are you sure you want to delete this company?')) {
     try {
       const response = await fetch(`/api/companies/${companyId}`, { method: 'DELETE' })
       if (!response.ok) throw new Error('Failed to delete company')
       // Refresh the data
-      mutate('/api/companies')
+      mutate('/api/companies-list')
     } catch (error) {
       console.error('Error deleting company:', error)
     }

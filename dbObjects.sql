@@ -568,3 +568,40 @@ ORDER BY
     revenue DESC
 LIMIT 5;
 
+
+
+
+-- Main Screen List Companies. 
+Create view companies_list as
+WITH deal_counts AS (
+    SELECT company_id, COUNT(*) as deal_count
+    FROM deals
+    GROUP BY company_id
+),
+lead_counts AS (
+    SELECT company_id, COUNT(*) as lead_count
+    FROM leads
+    GROUP BY company_id
+)
+SELECT 
+    c.company_id,
+    c.name_en,
+    c.name_jp,
+    c.employee_count,
+    c.capital,
+    c.revenue,
+    c.stage,
+    c.status,
+    c.country,
+    c.state,
+    c.industry,
+    COALESCE(d.deal_count, 0) AS deal_count,
+    COALESCE(l.lead_count, 0) AS lead_count
+FROM 
+    companies c
+LEFT JOIN deal_counts d ON c.company_id = d.company_id
+LEFT JOIN lead_counts l ON c.company_id = l.company_id
+ORDER BY 
+    c.company_id;
+
+
