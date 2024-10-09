@@ -236,6 +236,41 @@ CREATE TABLE IF NOT EXISTS targets (
 );
 
 
+CREATE TABLE industries (
+    industry_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL
+);
+
+CREATE TABLE countries (
+    country_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL,
+    code VARCHAR(2) UNIQUE NOT NULL
+);
+
+CREATE TABLE states (
+  state_id SERIAL PRIMARY KEY,
+  country_id INTEGER REFERENCES countries(country_id),
+  name TEXT NOT NULL,
+  code VARCHAR(10),
+  UNIQUE(country_id, name)
+);
+
+
+CREATE TABLE company_stages (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE,
+  order_num INTEGER NOT NULL
+);
+
+CREATE TABLE company_statuses (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE,
+  order_num INTEGER NOT NULL
+);
+
+
+
+
 -- Sample data for users table
 INSERT INTO users (
     uuid, user_id, username, first_name, last_name, root, email, enabled, password_hash, role, create_date, attributes
@@ -353,6 +388,39 @@ INSERT INTO deals (name_en, name_jp, lead_id, company_id, stage, deal_value, pro
 ('TechInnovate Cloud Migration', 'テックイノベートクラウド移行', 2, 2, 'Proposal', 250000.00, 0.50, '2023-02-15', '2023-08-31', 'Cloud Services', 1, 'Credit Card', 'USD', 300000.00, 25000.00, 250000.00, 2),
 ('Global Trade Financial Suite', 'グローバルトレード金融スイート', 3, 3, 'Qualification', 1000000.00, 0.25, '2023-03-01', '2023-12-31', 'Financial Software', 500, 'Bank Transfer', 'GBP', 1200000.00, 100000.00, 1000000.00, 3);
 
+-- Populate the tables
+INSERT INTO company_stages (name, order_num) VALUES
+('Target', 1), ('Potential', 2), ('Client', 3), ('Other', 4);
+
+INSERT INTO company_statuses (name, order_num) VALUES
+('Active', 1), ('Inactive', 2);
+
+
+INSERT INTO countries (name, code) VALUES ('Japan', 'JP'), ('United States', 'US');
+
+INSERT INTO states (country_id, name, code) 
+VALUES 
+  ((SELECT country_id FROM countries WHERE code = 'JP'), 'Tokyo', 'TK'),
+  ((SELECT country_id FROM countries WHERE code = 'JP'), 'Osaka', 'OS'),
+  ((SELECT country_id FROM countries WHERE code = 'US'), 'California', 'CA'),
+  ((SELECT country_id FROM countries WHERE code = 'US'), 'New York', 'NY');
+
+INSERT INTO industries (name) VALUES
+('Technology'),
+('Healthcare'),
+('Finance'),
+('Education'),
+('Manufacturing'),
+('Retail'),
+('Agriculture'),
+('Energy'),
+('Transportation'),
+('Entertainment'),
+('Construction'),
+('Hospitality'),
+('Telecommunications'),
+('Automotive'),
+('Aerospace');
 
 --Dashboard Queries
 

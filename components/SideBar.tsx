@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { 
-  ChevronDown, LayoutDashboard, BarChart2, FileText, HelpCircle, LogOut, Building, Users, Briefcase, Calculator, Receipt, ChevronLeft, ChevronRight
+  ChevronDown, LayoutDashboard, BarChart2, FileText, HelpCircle, LogOut, Building, Users, Briefcase, Calculator, Receipt, ChevronLeft, ChevronRight, Plus
 } from 'lucide-react'
 import { LucideProps } from 'lucide-react'
 
@@ -103,10 +103,11 @@ export default function Sidebar() {
           href="/sales" 
           isCollapsed={isCollapsed}
           subItems={[
-            { icon: LayoutDashboard, label: 'Sales Dashboard', href: '/sales/dashboard' },
+            { icon: LayoutDashboard, label: 'Sales Dashboard', href: '/dashboard' },
             { icon: Building, label: 'Company', href: '/companies' },
             { icon: Users, label: 'Lead', href: '/sales/lead' },
             { icon: Briefcase, label: 'Deal', href: '/sales/deal' },
+            { icon: Plus, label: 'Add Company', href: '/company_add' },
           ]} 
         />
         <MenuItem 
