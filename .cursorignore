@@ -4,5 +4,10 @@
 *.env.local
 ls_volume/
 *.next
-*.git
 node_modules/
+ls_volume
+node_modules
+.env
+.env-gdc
+.env.local
+.next

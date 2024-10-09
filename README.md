@@ -74,13 +74,13 @@ SalesConnect is a Next.js application for managing sales leads and client inform
 
 2. Run the Docker container:
    ```
-   docker run -p 58099:58099 connect-sales
+   docker run -p 3000:3000 connect-sales
    ```
    You might need to run the following command to allow the port through the firewall:
 
 3. sudo ufw allow <port_number>/tcp
 
-4. Access the application at [http://localhost:58099](http://localhost:58099)
+4. Access the application at [http://localhost:3000]
 
 
 ## Scripts
@@ -90,6 +90,15 @@ SalesConnect is a Next.js application for managing sales leads and client inform
 - `npm start` or `yarn start`: Runs the built app in production mode.
 - `npm run lint` or `yarn lint`: Runs the linter to check for code style issues.
 
+## Cloud Deployment
+   npm install -g pm2
+   pm2 start npm -- run dev
+   pm2 list
+   pm2 stop all
+   pm2 delete npm
+   pm2 kill
+
+   
 ## Dependencies
 
 This project uses the following main dependencies:

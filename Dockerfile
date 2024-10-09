@@ -17,10 +17,10 @@ COPY . .
 RUN npm run build
 
 # Expose the new port that the application will run on
-EXPOSE 58099
+EXPOSE 3000
 
 # Set the PORT environment variable
-ENV PORT=58099
+ENV PORT=3000
 
 # Start the application
 CMD ["npm", "start"]
