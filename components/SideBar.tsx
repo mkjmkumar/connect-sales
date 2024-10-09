@@ -81,7 +81,7 @@ export default function Sidebar() {
   }
 
   return (
-    <div className={`bg-white shadow-md h-screen flex flex-col font-sans transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'}`}>
+    <div className={`bg-gray-100 border-r border-gray-200 shadow-sm h-screen flex flex-col font-sans transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'}`}>
       <div className="px-4 py-3 flex justify-between items-center">
         {!isCollapsed && <img src="/images/logo.png" alt="Indo-Sakura Logo" className="h-12 w-auto" />}
         <button 

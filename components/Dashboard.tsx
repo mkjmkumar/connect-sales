@@ -63,7 +63,7 @@ const SummaryStats = ({ stats }: { stats: Stats }) => {
       {(Object.entries(stats) as [IconMapKey, number][]).map(([key, value]) => {
         const Icon: LucideIcon = iconMap[key as IconMapKey] || Building;
         return (
-          <Card key={key} className="relative overflow-hidden">
+          <Card key={key} className="relative overflow-hidden bg-white">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
@@ -140,7 +140,7 @@ interface ProgressByQuarterData {
 
 // Progress by Quarter Component
 const ProgressByQuarter = ({ data }: { data: ProgressByQuarterData[] }) => (
-  <Card>
+  <Card className="bg-white">
     <CardContent>
       <Table>
         <TableHeader>
@@ -264,7 +264,7 @@ const TopClientsPieChart = ({ data }: { data: TopClientData[] }) => {
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
   return (
-    <Card>
+    <Card className="bg-white">
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
@@ -303,7 +303,7 @@ const DealConversationActivities = ({ data }: { data: DealConversationActivityDa
   const [timeframe, setTimeframe] = useState('Today')
 
   return (
-    <Card>
+    <Card className="bg-white">
       <CardContent>
         <div className="flex space-x-2 mb-4">
           {['Today', 'Week', 'Month'].map((period) => (
@@ -395,12 +395,12 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-50">
       {isSidebarOpen && <Sidebar />}
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
-          <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
+          <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-sm p-6">
             <div className="px-4 py-6 sm:px-0">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
@@ -414,7 +414,7 @@ export default function Dashboard() {
                 <TabsContent value="overview" className="space-y-4">
                   <SummaryStats stats={summaryStats} />
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    <Card className="col-span-1">
+                    <Card className="col-span-1 bg-white">
                       <CardHeader>
                         <CardTitle>Target vs Achievement</CardTitle>
                       </CardHeader>
@@ -422,7 +422,7 @@ export default function Dashboard() {
                         <TargetAchievement data={targetAchievement} />
                       </CardContent>
                     </Card>
-                    <Card className="col-span-1 lg:col-span-2">
+                    <Card className="col-span-1 lg:col-span-2 bg-white">
                       <CardHeader>
                         <CardTitle>Progress by Quarter</CardTitle>
                       </CardHeader>
@@ -430,7 +430,7 @@ export default function Dashboard() {
                         <ProgressByQuarter data={progressByQuarter} />
                       </CardContent>
                     </Card>
-                    <Card className="col-span-1">
+                    <Card className="col-span-1 bg-white">
                       <CardHeader>
                         <CardTitle>Lead Generation</CardTitle>
                       </CardHeader>
@@ -438,7 +438,7 @@ export default function Dashboard() {
                         <LeadGenerationChart data={leadGeneration} />
                       </CardContent>
                     </Card>
-                    <Card className="col-span-1 lg:col-span-2">
+                    <Card className="col-span-1 lg:col-span-2 bg-white">
                       <CardHeader>
                         <CardTitle>Deal Conversation Activities</CardTitle>
                       </CardHeader>
@@ -446,7 +446,7 @@ export default function Dashboard() {
                         <DealConversationActivities data={dealConversationActivities} />
                       </CardContent>
                     </Card>
-                    <Card className="col-span-1">
+                    <Card className="col-span-1 bg-white">
                       <CardHeader>
                         <CardTitle>Top Clients</CardTitle>
                       </CardHeader>
@@ -454,7 +454,7 @@ export default function Dashboard() {
                         <TopClientsPieChart data={topClients} />
                       </CardContent>
                     </Card>
-                    <Card className="col-span-1 lg:col-span-2">
+                    <Card className="col-span-1 lg:col-span-2 bg-white">
                       <CardHeader>
                         <CardTitle>Deal Conversation</CardTitle>
                       </CardHeader>

@@ -116,12 +116,12 @@ export default function CompanyListing() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-50">
       {isSidebarOpen && <Sidebar />}
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header toggleSidebar={toggleSidebar} />
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
-          <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
+          <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-sm p-6">
             <div className="px-4 py-6 sm:px-0">
               <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold">Company List</h1>
@@ -135,7 +135,7 @@ export default function CompanyListing() {
                 <h2 className="text-xl font-semibold mb-4">Top companies this Quarter</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {data?.topCompanies?.map((company: any) => (
-                    <Card key={company.id}>
+                    <Card key={company.id} className="bg-white">
                       <CardHeader>
                         <CardTitle>{company.name_en}</CardTitle>
                       </CardHeader>

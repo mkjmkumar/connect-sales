@@ -9,7 +9,7 @@ interface HeaderProps {
 
 export default function Header({ toggleSidebar }: HeaderProps) {
   return (
-    <header className="bg-white shadow-sm z-10">
+    <header className="bg-white border-b border-gray-200 shadow-sm z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center">
