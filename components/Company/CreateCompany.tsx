@@ -13,6 +13,9 @@ import Sidebar from '../SideBar'
 import { useToast } from "../../hooks/use-toast"
 import { Toaster } from "../ui/toaster"
 import { PlusIcon, TrashIcon } from "@radix-ui/react-icons"
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { X } from "lucide-react"
 
 // Fetcher function for SWR
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
@@ -39,11 +42,15 @@ export default function CreateCompany() {
     name: "subsidiaryOffices"
   })
 
-  const { data: countries, error: countriesError, isLoading: isLoadingCountries } = useSWR('/api/countries', fetcher)
-  const { data: states, error: statesError, isLoading: isLoadingStates } = useSWR('/api/states', fetcher)
+  const { data: countries, error: countriesError } = useSWR('/api/countries', fetcher)
+  const [states, setStates] = useState([])
   const { data: industries, error: industriesError } = useSWR('/api/industries', fetcher)
   const { data: stages, error: stagesError } = useSWR('/api/company-stages', fetcher)
   const { data: statuses, error: statusesError } = useSWR('/api/company-statuses', fetcher)
+  const [selectedUsers, setSelectedUsers] = useState([])
+  const { data: users, error: usersError } = useSWR('/api/users', fetcher)
+  const [branchOfficeStates, setBranchOfficeStates] = useState({});
+  const [subsidiaryOfficeStates, setSubsidiaryOfficeStates] = useState({});
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen)
 
@@ -84,6 +91,17 @@ export default function CreateCompany() {
     // Implement your back navigation logic here
     // For example: router.push('/companies')
   }
+
+  useEffect(() => {
+    if (selectedCountry) {
+      fetch(`/api/states?country_id=${selectedCountry}`)
+        .then(res => res.json())
+        .then(data => setStates(data))
+        .catch(error => console.error('Error fetching states:', error))
+    } else {
+      setStates([])
+    }
+  }, [selectedCountry])
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -163,6 +181,7 @@ export default function CreateCompany() {
                             onValueChange={(value) => {
                               field.onChange(value)
                               setSelectedCountry(value)
+                              form.setValue('state', '') // Reset state when country changes
                             }} 
                             defaultValue={field.value}
                           >
@@ -189,14 +208,14 @@ export default function CreateCompany() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-gray-700">State *</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select..." />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {states?.map((state) => (
+                              {states.map((state) => (
                                 <SelectItem key={state.state_id} value={state.state_id.toString()}>
                                   {state.name}
                                 </SelectItem>
@@ -433,7 +452,23 @@ export default function CreateCompany() {
                               render={({ field }) => (
                                 <FormItem>
                                   <FormLabel>Country *</FormLabel>
-                                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                  <Select 
+                                    onValueChange={(value) => {
+                                      field.onChange(value)
+                                      form.setValue(`branchOffices.${index}.state`, '')
+                                      // Fetch states for the selected country
+                                      fetch(`/api/states?country_id=${value}`)
+                                        .then(res => res.json())
+                                        .then(data => {
+                                          setBranchOfficeStates(prevState => ({
+                                            ...prevState,
+                                            [index]: data
+                                          }))
+                                        })
+                                        .catch(error => console.error('Error fetching states:', error))
+                                    }} 
+                                    value={field.value}
+                                  >
                                     <FormControl>
                                       <SelectTrigger>
                                         <SelectValue placeholder="Select..." />
@@ -457,14 +492,18 @@ export default function CreateCompany() {
                               render={({ field }) => (
                                 <FormItem>
                                   <FormLabel>State *</FormLabel>
-                                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                  <Select 
+                                    onValueChange={field.onChange} 
+                                    value={field.value}
+                                    disabled={!form.getValues(`branchOffices.${index}.country`)}
+                                  >
                                     <FormControl>
                                       <SelectTrigger>
                                         <SelectValue placeholder="Select..." />
                                       </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                      {states?.map((state) => (
+                                      {branchOfficeStates[index]?.map((state) => (
                                         <SelectItem key={state.state_id} value={state.state_id.toString()}>
                                           {state.name}
                                         </SelectItem>
@@ -553,7 +592,23 @@ export default function CreateCompany() {
                               render={({ field }) => (
                                 <FormItem>
                                   <FormLabel>Country *</FormLabel>
-                                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                  <Select 
+                                    onValueChange={(value) => {
+                                      field.onChange(value)
+                                      form.setValue(`subsidiaryOffices.${index}.state`, '')
+                                      // Fetch states for the selected country
+                                      fetch(`/api/states?country_id=${value}`)
+                                        .then(res => res.json())
+                                        .then(data => {
+                                          setSubsidiaryOfficeStates(prevState => ({
+                                            ...prevState,
+                                            [index]: data
+                                          }))
+                                        })
+                                        .catch(error => console.error('Error fetching states:', error))
+                                    }} 
+                                    value={field.value}
+                                  >
                                     <FormControl>
                                       <SelectTrigger>
                                         <SelectValue placeholder="Select..." />
@@ -577,14 +632,18 @@ export default function CreateCompany() {
                               render={({ field }) => (
                                 <FormItem>
                                   <FormLabel>State *</FormLabel>
-                                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                  <Select 
+                                    onValueChange={field.onChange} 
+                                    value={field.value}
+                                    disabled={!form.getValues(`subsidiaryOffices.${index}.country`)}
+                                  >
                                     <FormControl>
                                       <SelectTrigger>
                                         <SelectValue placeholder="Select..." />
                                       </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                      {states?.map((state) => (
+                                      {subsidiaryOfficeStates[index]?.map((state) => (
                                         <SelectItem key={state.state_id} value={state.state_id.toString()}>
                                           {state.name}
                                         </SelectItem>
@@ -625,8 +684,75 @@ export default function CreateCompany() {
                     </div>
                   </div>
                   
-                  <h4 className="text-lg font-semibold text-gray-700 border-b pb-2 mt-8">Sales Information</h4>
-                  {/* Add fields for sales information here */}
+                  <div className="mt-8">
+                    <h4 className="text-lg font-semibold text-gray-700 border-b pb-2">Sales Information</h4>
+                    <div className="mt-4">
+                      <FormLabel className="text-gray-700">Managed by *</FormLabel>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {selectedUsers.map((user) => (
+                          <div key={user.id} className="flex items-center bg-gray-100 rounded-full pl-1 pr-2 py-1">
+                            <Avatar className="h-6 w-6 mr-1">
+                              <AvatarImage src={user.avatar} alt={user.name} />
+                              <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            <span className="text-sm">{user.name}</span>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="ml-1 h-4 w-4 p-0"
+                              onClick={() => setSelectedUsers(selectedUsers.filter(u => u.id !== user.id))}
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        ))}
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="h-8"
+                            >
+                              Add Person
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-80">
+                            <div className="space-y-4">
+                              <h4 className="font-medium">Add User</h4>
+                              <Input
+                                type="text"
+                                placeholder="Search users..."
+                                onChange={(e) => {
+                                  // Implement search logic here
+                                }}
+                              />
+                              <div className="max-h-48 overflow-y-auto">
+                                {users?.map((user) => (
+                                  <div
+                                    key={user.id}
+                                    className="flex items-center space-x-2 p-2 hover:bg-gray-100 cursor-pointer"
+                                    onClick={() => {
+                                      if (!selectedUsers.find(u => u.id === user.id)) {
+                                        setSelectedUsers([...selectedUsers, user])
+                                      }
+                                    }}
+                                  >
+                                    <Avatar className="h-8 w-8">
+                                      <AvatarImage src={user.avatar} alt={user.name} />
+                                      <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                                    </Avatar>
+                                    <span>{user.name}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    </div>
+                  </div>
                   
                   <div className="flex justify-end space-x-4 mt-6">
                     <Button
