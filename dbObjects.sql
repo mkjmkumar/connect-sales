@@ -202,6 +202,29 @@ CREATE TABLE taggables (
     PRIMARY KEY (tag_id, taggable_type, taggable_id)
 );
 
+
+CREATE TABLE deals (
+    deal_id SERIAL PRIMARY KEY,
+    name_en VARCHAR(100) NOT NULL,
+    name_jp VARCHAR(100),
+    lead_id INTEGER REFERENCES leads(lead_id),
+    company_id INTEGER REFERENCES companies(company_id),
+    stage VARCHAR(20),
+    deal_value DECIMAL(15, 2),
+    probability DECIMAL(5, 2),
+    start_date DATE,
+    closing_date DATE,
+    product VARCHAR(100),
+    licenses_count INTEGER,
+    payment_method VARCHAR(50),
+    currency VARCHAR(3),
+    budget DECIMAL(15, 2),
+    deposit_amount DECIMAL(15, 2),
+    estimated_revenue DECIMAL(15, 2),
+    created_by INTEGER REFERENCES users(user_id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- You'll need to add a target table or column to track targets
 CREATE TABLE IF NOT EXISTS targets (
     target_id SERIAL PRIMARY KEY,
@@ -330,36 +353,6 @@ INSERT INTO deals (name_en, name_jp, lead_id, company_id, stage, deal_value, pro
 ('TechInnovate Cloud Migration', 'テックイノベートクラウド移行', 2, 2, 'Proposal', 250000.00, 0.50, '2023-02-15', '2023-08-31', 'Cloud Services', 1, 'Credit Card', 'USD', 300000.00, 25000.00, 250000.00, 2),
 ('Global Trade Financial Suite', 'グローバルトレード金融スイート', 3, 3, 'Qualification', 1000000.00, 0.25, '2023-03-01', '2023-12-31', 'Financial Software', 500, 'Bank Transfer', 'GBP', 1200000.00, 100000.00, 1000000.00, 3);
 
-CREATE TABLE deals (
-    deal_id SERIAL PRIMARY KEY,
-    name_en VARCHAR(100) NOT NULL,
-    name_jp VARCHAR(100),
-    lead_id INTEGER REFERENCES leads(lead_id),
-    company_id INTEGER REFERENCES companies(company_id),
-    stage VARCHAR(20),
-    deal_value DECIMAL(15, 2),
-    probability DECIMAL(5, 2),
-    start_date DATE,
-    closing_date DATE,
-    product VARCHAR(100),
-    licenses_count INTEGER,
-    payment_method VARCHAR(50),
-    currency VARCHAR(3),
-    budget DECIMAL(15, 2),
-    deposit_amount DECIMAL(15, 2),
-    estimated_revenue DECIMAL(15, 2),
-    created_by INTEGER REFERENCES users(user_id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS targets (
-    target_id SERIAL PRIMARY KEY,
-    target_type VARCHAR(50),
-    target_value INTEGER,
-    target_period VARCHAR(20),
-    target_year INTEGER,
-    target_quarter INTEGER
-);
 
 --Dashboard Queries
 

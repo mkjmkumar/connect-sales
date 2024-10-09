@@ -98,6 +98,12 @@ SalesConnect is a Next.js application for managing sales leads and client inform
    pm2 delete npm
    pm2 kill
 
+## Running pgAdmin 4 with Docker Compose
+
+To run pgAdmin 4 using the provided Docker Compose file, follow these steps:
+docker-compose -f compose.yml up -d
+
+
    
 ## Dependencies
 
