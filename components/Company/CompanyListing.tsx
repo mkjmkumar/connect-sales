@@ -128,7 +128,9 @@ export default function CompanyListing() {
                 <h1 className="text-2xl font-bold">Company List</h1>
                 <div className="flex space-x-2">
                   <Button onClick={handleExport}>Export</Button>
-                  <Button as={Link} href="/companies/company_add">+ Create</Button>
+                  <Link href="/companies/company_add">
+                    <Button>+ Create</Button>
+                  </Link>
                 </div>
               </div>
 

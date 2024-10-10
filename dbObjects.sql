@@ -64,8 +64,7 @@ CREATE TABLE companies (
 -- Company_managers table (for multiple managers per company)
 CREATE TABLE company_managers (
     company_id INTEGER REFERENCES companies(company_id),
-    user_id INTEGER REFERENCES users(user_id),
-    PRIMARY KEY (company_id, user_id)
+    user_id INTEGER REFERENCES users(user_id)
 );
 
 -- Branch_offices table
@@ -74,7 +73,9 @@ CREATE TABLE branch_offices (
     company_id INTEGER REFERENCES companies(company_id),
     name VARCHAR(100),
     address TEXT,
-    telephone VARCHAR(20)
+    telephone VARCHAR(20),
+    country VARCHAR(50),
+    state VARCHAR(50)
 );
 
 -- Subsidiaries table
@@ -83,8 +84,11 @@ CREATE TABLE subsidiaries (
     parent_company_id INTEGER REFERENCES companies(company_id),
     name VARCHAR(100),
     address TEXT,
-    telephone VARCHAR(20)
+    telephone VARCHAR(20),
+    country VARCHAR(50),
+    state VARCHAR(50)
 );
+
 
 -- Leads table
 CREATE TABLE leads (
@@ -633,16 +637,17 @@ LIMIT 5;
 
 
 -- Main Screen List Companies. 
-Create view companies_list as
+create view companies_list as
 WITH deal_counts AS (
-    SELECT company_id, COUNT(*) as deal_count
+    SELECT deals.company_id,
+        count(*) AS deal_count
     FROM deals
-    GROUP BY company_id
-),
-lead_counts AS (
-    SELECT company_id, COUNT(*) as lead_count
+    GROUP BY deals.company_id
+), lead_counts AS (
+    SELECT leads.company_id,
+        count(*) AS lead_count
     FROM leads
-    GROUP BY company_id
+    GROUP BY leads.company_id
 )
 SELECT 
     c.company_id,
@@ -651,17 +656,23 @@ SELECT
     c.employee_count,
     c.capital,
     c.revenue,
-    c.stage,
-    c.status,
-    c.country,
-    c.state,
-    c.industry,
-    COALESCE(d.deal_count, 0) AS deal_count,
-    COALESCE(l.lead_count, 0) AS lead_count
+    COALESCE(cs.name, c.stage) AS stage,
+    COALESCE(cst.name, c.status) AS status,
+    COALESCE(co.name, c.country) AS country,
+    COALESCE(s.name, c.state) AS state,
+    COALESCE(i.name, c.industry) AS industry,
+    c.created_at,
+    COALESCE(d.deal_count, 0::bigint) AS deal_count,
+    COALESCE(l.lead_count, 0::bigint) AS lead_count
 FROM 
     companies c
-LEFT JOIN deal_counts d ON c.company_id = d.company_id
-LEFT JOIN lead_counts l ON c.company_id = l.company_id
+    LEFT JOIN deal_counts d ON c.company_id = d.company_id
+    LEFT JOIN lead_counts l ON c.company_id = l.company_id
+    LEFT JOIN company_stages cs ON c.stage = cs.id::text
+    LEFT JOIN company_statuses cst ON c.status = cst.id::text
+    LEFT JOIN countries co ON c.country = co.country_id::text
+    LEFT JOIN states s ON c.state = s.state_id::text
+    LEFT JOIN industries i ON c.industry = i.industry_id::text
 ORDER BY 
     c.company_id;
 

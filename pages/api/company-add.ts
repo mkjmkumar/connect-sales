@@ -18,14 +18,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         industry,
         address,
         telephone,
-        logo,
+        logo_url,
+        created_by
       } = req.body
-
-      // TODO: Implement file upload for logo and get the URL
-      const logo_url = '' // This should be implemented separately
-
-      // TODO: Implement user authentication and get the user ID
-      const userId = '8' // This should be replaced with actual user ID from authentication
 
       const { data, error } = await supabaseAdmin
         .from('companies')
@@ -45,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             address,
             telephone,
             logo_url,
-            created_by: userId,
+            created_by
           }
         ])
 
