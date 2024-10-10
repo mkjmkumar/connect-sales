@@ -189,3 +189,9 @@ $ tree -L 2 -I 'node_modules|git|ls_volume'
 ├── __tests__
 │   └── LeadsList.test.tsx
 └── tsconfig.json
+
+
+
+## Additional Features
+## If we want to use the company-info API, we need to install the following dependencies:
+npm install axios cheerio

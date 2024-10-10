@@ -677,3 +677,37 @@ ORDER BY
     c.company_id;
 
 
+
+CREATE OR REPLACE FUNCTION create_company_with_offices(
+  company_data JSON,
+  branch_offices JSON,
+  subsidiary_offices JSON
+) RETURNS JSON AS $$
+DECLARE
+  new_company_id INT;
+  result JSON;
+BEGIN
+  -- Insert the main company
+  INSERT INTO companies
+  SELECT * FROM json_populate_record(null::companies, company_data)
+  RETURNING company_id INTO new_company_id;
+
+  -- Insert branch offices
+  INSERT INTO branch_offices (company_id, name, country, state, address, telephone)
+  SELECT new_company_id, value->>'name', value->>'country', value->>'state', value->>'address', value->>'telephone'
+  FROM json_array_elements(branch_offices);
+
+  -- Insert subsidiary offices
+  INSERT INTO subsidiaries (parent_company_id, name, country, state, address, telephone)
+  SELECT new_company_id, value->>'name', value->>'country', value->>'state', value->>'address', value->>'telephone'
+  FROM json_array_elements(subsidiary_offices);
+
+  -- Prepare the result
+  SELECT json_build_object(
+    'company_id', new_company_id,
+    'message', 'Company created successfully with offices'
+  ) INTO result;
+
+  RETURN result;
+END;
+$$ LANGUAGE plpgsql;

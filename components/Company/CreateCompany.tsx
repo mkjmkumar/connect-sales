@@ -53,6 +53,7 @@ const formSchema = z.object({
     telephone: z.string(),
   })),
   remarks: z.string(),
+  logo_url: z.string(),
 });
 
 // Infer the FormValues type from the schema
@@ -114,6 +115,7 @@ export default function CreateCompany() {
       branchOffices: [],
       subsidiaryOffices: [],
       remarks: '',
+      logo_url: '',
     },
   })
 
@@ -152,30 +154,30 @@ export default function CreateCompany() {
           capital: parseFloat(data.capital_amount),
           revenue: 0, // You may want to add this field to your form if needed
           created_by: 1, // Replace with actual user ID from authentication
+          branchOffices: data.branchOffices,
+          subsidiaryOffices: data.subsidiaryOffices,
         }),
-      })
+      });
 
       if (!response.ok) {
-        throw new Error('Failed to create company')
+        throw new Error('Failed to create company');
       }
 
-      const result = await response.json()
-
+      const result = await response.json();
       toast({
         title: "Success",
         description: result.message,
-      })
-
-      router.push('/companies')
+      });
+      router.push('/companies');
     } catch (error) {
-      console.error('Error creating company:', error)
+      console.error('Error creating company:', error);
       toast({
         variant: "destructive",
         title: "Error",
         description: "Failed to create company. Please try again.",
-      })
+      });
     }
-  }
+  };
 
   const handleReset = () => {
     form.reset()
@@ -210,19 +212,72 @@ export default function CreateCompany() {
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 max-h-[calc(100vh-250px)] overflow-y-auto pr-4">
                     <h4 className="text-lg font-semibold text-gray-700 border-b pb-2 mb-2">General Information</h4>
-                    <FormField
-                      control={form.control}
-                      name="website"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-gray-700">Website link *</FormLabel>
-                          <FormControl>
-                            <Input {...field} placeholder="eg: www.google.com" className="border-gray-300" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                      <FormField
+                        control={form.control}
+                        name="website"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-gray-700">Website link *</FormLabel>
+                            <FormControl>
+                              <div className="flex items-center">
+                                {form.watch('logo_url') && (
+                                  <img 
+                                    src={form.watch('logo_url')} 
+                                    alt="Company Logo" 
+                                    className="w-8 h-8 mr-2 object-contain" 
+                                    onError={(e) => {
+                                      console.error('Error loading image:', e);
+                                      e.currentTarget.style.display = 'none';
+                                    }}
+                                  />
+                                )}
+                                <Input
+                                  {...field}
+                                  placeholder="eg: www.google.com"
+                                  className="border-gray-300"
+                                  onBlur={async (e) => {
+                                    field.onBlur(e);
+                                    if (field.value) {
+                                      try {
+                                        const response = await fetch(`/api/company-info?website=${encodeURIComponent(field.value)}`);
+                                        if (response.ok) {
+                                          const data = await response.json();
+                                          form.setValue('name_en', data.name_en);
+                                          form.setValue('name_jp', data.name_jp);
+                                          form.setValue('logo_url', data.logo_url);
+                                        }
+                                      } catch (error) {
+                                        // Error is silently handled here
+                                      }
+                                    }
+                                  }}
+                                />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="logo_url"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-gray-700">Company Logo</FormLabel>
+                            <FormControl>
+                              <div className="flex items-center">
+                                {field.value && (
+                                  <img src={field.value} alt="Company Logo" className="w-8 h-8 mr-2 object-contain" />
+                                )}
+                                <Input {...field} placeholder="Logo URL" className="border-gray-300" />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                       <FormField
                         control={form.control}
